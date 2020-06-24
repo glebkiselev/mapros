@@ -91,7 +91,8 @@ class MapPlanner(MPcore):
         problem = self._parse_spatial()
         logger.info('Пространственная проблема получена и распознана')
         manager = Manager(problem, self.agpath, TaskType=self.TaskType, backward=self.backward, subsearch = self.subsearch)
-        solution = manager.handle_robot_request
+        #solution = manager.handle_robot_request
+        solution = None
         return solution
 
 if __name__ == "__main__":

@@ -1,10 +1,10 @@
 import logging
 import sys
 from copy import deepcopy
-from src.planner.scripts.mapcore.swm import Sign
-from src.planner.scripts.mapspatial import SpTask
+from mapcore.swm.src.components.semnet import Sign
+from .planning_task import SpTask
 
-from src.planner.scripts import mapspatial as ut
+import mapspatial.grounding.utils as ut
 
 signs = {}
 

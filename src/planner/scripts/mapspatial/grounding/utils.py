@@ -4,7 +4,7 @@ import re
 import sys
 from copy import deepcopy, copy
 from functools import reduce
-from src.planner.scripts.mapcore.swm import Sign
+from mapcore.swm.src.components.semnet import Sign
 
 
 def draw(state, mapjs, gif = False):

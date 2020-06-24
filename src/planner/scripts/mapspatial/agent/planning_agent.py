@@ -15,7 +15,7 @@ from ..grounding import json_grounding
 from ..grounding.utils import signs_markup, state_prediction, define_situation, define_map, \
     state_fixation, locater, cell_creater
 from ..search.mapsearch import SpSearch
-from src.planner.scripts.mapcore.planning import PlanningAgent
+from mapcore.planning.agent.planning_agent import PlanningAgent
 
 SIT_SUF = 0
 

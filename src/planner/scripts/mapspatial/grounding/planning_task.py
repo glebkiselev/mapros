@@ -1,7 +1,7 @@
 import sys
 
-from src.planner.scripts.mapcore.swm import Sign
-from src.planner.scripts import mapspatial as ut
+from mapcore.swm.src.components.semnet import Sign
+import mapspatial.grounding.utils as ut
 
 DEFAULT_FILE_PREFIX = 'wmodel_'
 DEFAULT_FILE_SUFFIX = '.swm'
