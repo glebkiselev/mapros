@@ -237,6 +237,7 @@ class SpTask:
                 for glob_act, plan in action.items():
                     logging.info("Сохраняю подплан для действия {0} агента {1}".format(glob_act[0], glob_act[1]))
                     if plans.index(action) == 0:
+                        print(plan[0])
                         subplan, self.signs, plan_sit, plan_map, elem_acts_im = create_subplan(plan, glob_act[1], self.signs, plan_sit, plan_map, start = True)
                     else:
                         subplan, self.signs, plan_sit, plan_map, elem_acts_im = create_subplan(plan, glob_act[1],

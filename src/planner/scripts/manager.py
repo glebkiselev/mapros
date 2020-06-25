@@ -64,6 +64,7 @@ class Manager:
             print('Request was ' + request)
             ag_name = re.split(': ', request)[1]
             if self.solution:
+                print('sol len is {0} sending it to {1}'.format(len(self.solution), ag_name))
                 return AddRobotMessageResponse('STOP: %s' % self.solution)
             while not ag_name in self.subtasks or self.solution:
                 time.sleep(1)
@@ -78,10 +79,7 @@ class Manager:
             print('Request was requirements_sub')
             req = re.split(': ', request)[1]
             subtask = pickle.loads(req.encode())
-            print('act_agent is %s' % subtask[0])
-            print('sub is %s' % len(subtask[1]))
-            print('map is %s' % len(subtask[2]))
-            self.subtasks[subtask[0]] = req
+            self.subtasks[subtask[0]] = pickle.dumps(subtask[1:], 0).decode()
             while not subtask[0] in self.solved:
                 time.sleep(1)
             else:
@@ -92,7 +90,7 @@ class Manager:
             print('Request was requirements_solved')
             req = re.split(': ', request)[1]
             subtask = pickle.loads(req.encode())
-            self.solved[subtask[0]] = subtask[1]
+            self.solved[subtask[0]] = subtask[1], subtask[2]
             return AddRobotMessageResponse('saved')
 
 class Problem:

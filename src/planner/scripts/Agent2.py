@@ -127,9 +127,6 @@ class RoboAgent:
                     flag = False
                 else:
                     subtask = pickle.loads(req.encode())
-                    print('act_agent is %s' % subtask[0])
-                    print('sub is %s' % len(subtask[1]))
-                    print('map is %s' % len(subtask[2]))
                     if subtask[1]:
                         workman.change_start(subtask[1], subtask[0][0][1])
                     workman.load_subtask(subtask[0])
@@ -147,7 +144,7 @@ class RoboAgent:
                     self_sol[subtask[0][0]] = major_message
                     self_solutions.append((self_sol, solution))
                     if subtask_solution:
-                        sol = pickle.dumps((major_message, map), 0).decode()
+                        sol = pickle.dumps((self.name, major_message, map), 0).decode()
                         server_answer = self.send_request("requirements_solved: {0}".format(sol))
                     else:
                         logging.info("Агент {0} не смог синтезировать план".format(self.name))

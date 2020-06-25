@@ -91,16 +91,13 @@ class RoboAgent:
                     self_solutions.append((self_sol, solution))
                 else:
                     subpl = pickle.dumps((act_agent, sub, map), 0).decode()
-                    print('act_agent is %s' % act_agent)
-                    print('sub is %s' % len(sub))
-                    print('map is %s' % len(map))
                     ag_solution = self.send_request("requirements_sub: %s" %subpl)
                     ag_solution = pickle.loads(ag_solution.encode())
                     solution[sub[0]] = ag_solution
                     solutions.append(solution)
                     map = ag_solution[1]
             # send final solutions
-            print('sending final solution by %s' % self.name)
+            print('sending final solution by major agent %s' % self.name)
             sol_to_send = pickle.dumps(solutions, 0).decode()
             server_answer = self.send_request("requirements_solution: {0}".format(sol_to_send))
 
@@ -109,7 +106,7 @@ class RoboAgent:
             while flag:
                 req = self.send_request("requirements_wait_sol: %s" %self.name)
                 if 'STOP:' in req:
-                    subtask = re.split(': ', req)[1]
+                    subtask = re.split(': ', req)[2]
                     major_solutions = pickle.loads(subtask.encode())
                     if major_solutions:
                         major_agent_sign = workman.task.signs[major_agent]
@@ -147,7 +144,7 @@ class RoboAgent:
                     self_sol[subtask[0][0]] = major_message
                     self_solutions.append((self_sol, solution))
                     if subtask_solution:
-                        sol = pickle.dumps((major_message, map), 0).decode()
+                        sol = pickle.dumps((self.name, major_message, map), 0).decode()
                         server_answer = self.send_request("requirements_solved: {0}".format(sol))
                     else:
                         logging.info("Агент {0} не смог синтезировать план".format(self.name))
