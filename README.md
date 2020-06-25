@@ -1,18 +1,21 @@
 ### Описание пайплайна
-Всего у данного пайплайна такие основные шаги:
-1. Работа планировщика: ему задается одна из spatial задач (которые есть в mapspatial/benchmarks/spatial/blocks/), он ее выполняет ее и сохраняет все шаги отдельно в tasks_jsons/task{task_num}/planner_steps/
-2. Далее запускается utils/planner_parser.py, который парсит шаги планировщика и переделывает их в таски для rl агента, объединяет некоторые шаги, изменяемые координаты которых находятся в определенном окне, и потом сохраняет эти новые таски в tasks_jsons/task{task_num}/planner_steps_parsed/
-3. После этого запускается rl агент, который выполняет отдельно каждый распаршенный шаг в окне, а потом сохраняет ту стратегию, которую он выучил, в txt файлики в папку tasks_jsons/task{task_num}/'rl_agent_steps/
-4. Затем из шагов rl агента достаются те шаги, которые содержат действия pick-up или put down, и сохраняются в tasks_jsons/task{task_num}/manipulator_sits_raw/situations.json
-5. На последнем шаге запускается DQN-агент, который находит наилучшие последовательности движений манипулятора и сохраняет их в tasks_jsons/task{task_num}/manipulator_sits_solved/
-
+ROS пакет planner содержит узлы mapplanner.py, Agent1.py, Agent2.py, Agent3.py.
+В планировании используются библиотеки mapspatial, mapmulti, mapcore, robot-act. Их 
+адаптация внутри папки scripts
 ### Запуск
-Клонировать репозиторий и запустить train.py (в методе main() устанавливаются параметры запуска в переменной parameters).
+1. Создаем ROS-окружение
+2. Создаем ROS-пакет
+3. Копируем папку scripts
+4. chmod +x на Agent* и mapplanner.py
+5. catkin_make на уровне ROS-окружения
+####В отдельных терминалах:
+1. source devel/setup.bash
+2. rosrun planner mapplanner.py
+
+rosrun planner Agent1.py
+
+rosrun planner Agent2.py
+
 
 ### Dependencies
-- Numpy
-- Matplotlib
-- Gym
-- mapcore from glebkiselev [[map-core]](https://github.com/glebkiselev/map-core)
-- mapspatial from glebkiselev [[map-spatial]](https://github.com/glebkiselev/map-spatial)
-# mapros
+ROS melodic/kinetic

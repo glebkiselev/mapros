@@ -151,20 +151,21 @@ class RoboAgent:
 
 
 
-
-        for ind, act1 in enumerate(copy(solutions)):
-            for act1_name, act1_map in act1.items():
-                for act2, self_act in self_solutions:
-                    flag = False
-                    for act2_name, act2_map in act2.items():
-                        if act1_name[0] == act2_name[0]:
-                            if act1_map == act2_map:
-                                solutions[ind] = self_act
-                                flag = True
-                                break
-                    if flag:
-                        break
-        file_name = workman.task.save_signs(solutions)
+        #
+        # for ind, act1 in enumerate(copy(solutions)):
+        #     for act1_name, act1_map in act1.items():
+        #         for act2, self_act in self_solutions:
+        #             flag = False
+        #             for act2_name, act2_map in act2.items():
+        #                 if act1_name[0] == act2_name[0]:
+        #                     if act1_map == act2_map:
+        #                         solutions[ind] = self_act
+        #                         flag = True
+        #                         break
+        #             if flag:
+        #                 break
+        # file_name = workman.task.save_signs(solutions)
+        file_name = True
 
         if file_name:
             logging.info('Агент ' + self.name + ' закончил работу')
