@@ -1,4 +1,4 @@
-from src.planner.scripts.mapcore.planning import PlanningTask
+from mapcore.planning.grounding.planning_task import PlanningTask
 
 DEFAULT_FILE_PREFIX = 'wmodel_'
 DEFAULT_FILE_SUFFIX = '.swm'

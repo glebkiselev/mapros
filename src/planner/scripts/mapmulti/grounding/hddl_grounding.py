@@ -1,7 +1,7 @@
-from src.planner.scripts.mapcore.swm import Sign
-from src.planner.scripts.mapcore.planning import mix_pairs
+from mapcore.swm.src.components.semnet import Sign
+from mapcore.planning.search.mapsearch import mix_pairs
 from copy import copy
-from src.planner.scripts.mapcore.planning import PlanningTask as Task
+from mapcore.planning.grounding.planning_task import PlanningTask as Task
 
 signs = {}
 obj_signifs = {}

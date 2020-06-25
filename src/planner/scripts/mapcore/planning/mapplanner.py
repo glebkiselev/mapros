@@ -84,7 +84,7 @@ class MapPlanner():
         :param problem_file:
         :return:
         """
-        from src.planner.scripts.mapcore.planning import Parser
+        from mapcore.planning.parsers.pddl_parser import Parser
 
         parser = Parser(self.domain, self.problem)
         logging.info('Parsing Domain {0}'.format(self.domain))
@@ -105,7 +105,7 @@ class MapPlanner():
         :param problem_file:
         :return:
         """
-        from src.planner.scripts.mapcore.planning import HTNParser
+        from mapcore.planning.parsers.hddl_parser import HTNParser
         parser = HTNParser(self.domain, self.problem)
         logging.info('Распознавание домена {0} ...'.format(self.domain))
         domain = parser.ParseDomain(parser.domain)

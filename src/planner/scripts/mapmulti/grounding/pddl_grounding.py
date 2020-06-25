@@ -3,11 +3,11 @@ import logging
 import itertools
 from functools import reduce
 
-from src.planner.scripts.mapcore.swm import Sign
-from src.planner.scripts.mapmulti.grounding import MaPlanningTask
-from src.planner.scripts.mapcore.planning.grounding.pddl_grounding import signify_predicates, pred_resonate, _update_predicates, \
+from mapcore.swm.src.components.semnet import Sign
+from mapmulti.grounding.planning_task import MaPlanningTask
+from mapcore.planning.grounding.pddl_grounding import signify_predicates, pred_resonate, _update_predicates, \
     _define_situation, _update_exp_signs, _create_type_map, _create_subtype
-from src.planner.scripts.mapcore.planning import mix_pairs
+from mapcore.planning.search.mapsearch import mix_pairs
 
 
 def ground(problem, plagent, exp_signs=None):

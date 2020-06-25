@@ -1,7 +1,7 @@
 import re
 
-import src.planner.scripts.mapmulti.parsers.branch_parser as bch
-from src.planner.scripts.mapcore.planning import HTNParser, Problem
+import mapmulti.parsers.branch_parser as bch
+from mapcore.planning.parsers.hddl_parser import HTNParser, Problem
 
 class maHDDLParser(HTNParser):
     def __init__(self, domain_file, problem_file):

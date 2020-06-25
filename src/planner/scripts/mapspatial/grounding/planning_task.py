@@ -1,4 +1,8 @@
+import logging
+import os
+import pickle
 import sys
+from datetime import datetime
 
 from mapcore.swm.src.components.semnet import Sign
 import mapspatial.grounding.utils as ut
@@ -362,7 +366,7 @@ class SpTask:
             I_obj = "_"+I_obj[0].name
         else:
             I_obj = 'I'
-        file_name = DEFAULT_FILE_PREFIX + datetime.datetime.now().strftime('%m_%d_%H_%M')  + '_spatial_' + I_obj +DEFAULT_FILE_SUFFIX
+        file_name = DEFAULT_FILE_PREFIX + datetime.now().strftime('%m_%d_%H_%M')  + '_spatial_' + I_obj +DEFAULT_FILE_SUFFIX
         logging.info('Файл пространственного опыта: {0}'.format(file_name))
         logging.debug('\tСохраняю ЗКМ агента...')
         pickle.dump(self.signs, open(file_name, 'wb'))

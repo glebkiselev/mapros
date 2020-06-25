@@ -96,8 +96,8 @@ class MapPlanner(MPcore):
         return solution
 
 if __name__ == "__main__":
-    task_num = '1'
-    task_type = 'spatial'
+    task_num = '0'
+    task_type = 'maspatial'
     if platform.system() != 'Windows':
         delim = '/'
     else:

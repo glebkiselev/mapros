@@ -2,7 +2,8 @@ import math
 import subprocess
 import json
 
-from mapspatial.grounding import planning_task as st
+from mapspatial.grounding.planning_task import MAP_PREFIX, SIT_PREFIX, PLAN_PREFIX, SIT_COUNTER, SUBPLAN_COUNTER
+
 from mapcore.planning.search.mapsearch import *
 from mapspatial.grounding.utils import *
 
@@ -23,6 +24,11 @@ class SpSearch(MapSearch):
             self.active_map = task.start_map.images[1]
             self.goal_map = task.goal_map.images[1]
         self.check_map = False
+        self.MAP_PREFIX = MAP_PREFIX
+        self.SIT_PREFIX = SIT_PREFIX
+        self.PLAN_PREFIX = PLAN_PREFIX
+        self.SIT_COUNTER = SIT_COUNTER
+        self.SUBPLAN_COUNTER = SUBPLAN_COUNTER
 
         logging.debug('Start: {0}'.format(self.goal_pm.longstr()))
         logging.debug('Finish: {0}'.format(self.active_pm.longstr()))
@@ -545,15 +551,15 @@ class SpSearch(MapSearch):
         self.clarification_lv -= 1
         logging.info('Абстрагирование разрешено. Новый уровень уточнения ситуации: {0}'.format(self.clarification_lv))
 
-        sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
-        st.SIT_COUNTER += 1
+        sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
+        self.SIT_COUNTER += 1
         conditions, direction, holding = pm_parser(active_pm.sign.images[1], agent, self.world_model, base='image')
         agent_state = state_prediction(self.world_model['I'], direction, self.world_model, holding)
         active_sit_new = define_situation(sit_name + 'sp', cell_map, conditions, agent_state, self.world_model)
-        active_map_new = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+        active_map_new = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                 self.additions[1],
                                 self.world_model)
-        st.SIT_COUNTER += 1
+        self.SIT_COUNTER += 1
         iteration += 1
         state_fixation(active_sit_new, cell_coords, self.world_model, 'cell')
         self.additions[0][iteration] = deepcopy(self.additions[0][iteration - 1])
@@ -570,7 +576,7 @@ class SpSearch(MapSearch):
             logging.info('Достигнут уровень уточнения цели с помощью абстрагирования. Уровень уточнения : {0}'.format(self.clarification_lv))
             goal_sit_new = self.goal_pm.sign.images[1]
         else:
-            sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
+            sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
             region_location, region_map = locater('region-', rmap, goal['objects'], borders)
             cell_location, cell_map, near_loc, cell_coords, clar_lv = cell_creater(size,
                                                                                    goal['objects'],
@@ -579,10 +585,10 @@ class SpSearch(MapSearch):
             conditions, direction, holding = pm_parser(goal_pm.sign.images[1], agent, self.world_model,base='image')
             agent_state = state_prediction(self.world_model['I'], direction, self.world_model, holding)
             goal_sit_new = define_situation(sit_name + 'sp', cell_map, conditions, agent_state, self.world_model)
-            goal_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+            goal_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                   self.additions[1],
                                   self.world_model)
-            st.SIT_COUNTER += 1
+            self.SIT_COUNTER += 1
             state_fixation(goal_sit_new, cell_coords, self.world_model, 'cell')
 
         return active_sit_new, goal_sit_new, active_map_new, goal_map, iteration, True
@@ -673,15 +679,15 @@ class SpSearch(MapSearch):
                     break
         cell_location, cell_map, near_loc, cell_coords, _ = cell_creater(size, objects, region_location, borders)
         # define new sit
-        sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
+        sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
         events, direction, holding = pm_parser(active_pm, agent, self.world_model)
         agent_state = state_prediction(self.world_model['I'], direction, self.world_model, holding)
         goal_pm = define_situation(sit_name + 'sp', cell_map, events, agent_state, self.world_model)
         # define new map
-        goal_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+        goal_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                 self.additions[1],
                                 self.world_model)
-        st.SIT_COUNTER += 1
+        self.SIT_COUNTER += 1
 
         state_fixation(goal_pm, cell_coords, self.world_model, 'cell')
 
@@ -711,15 +717,15 @@ class SpSearch(MapSearch):
         cell_location, cell_map, near_loc, cell_coords, clar_lv = cell_creater(size, objects, region_location, borders)
         self.clarification_lv += clar_lv
 
-        sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
-        st.SIT_COUNTER += 1
+        sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
+        self.SIT_COUNTER += 1
         conditions, direction, holding = pm_parser(active_pm.sign.images[1], agent, self.world_model, base='image')
         agent_state = state_prediction(self.world_model['I'], direction, self.world_model, holding)
         active_sit_new = define_situation(sit_name + 'sp', cell_map, conditions, agent_state, self.world_model)
-        active_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+        active_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                 self.additions[1],
                                 self.world_model)
-        st.SIT_COUNTER += 1
+        self.SIT_COUNTER += 1
         iteration+=1
         state_fixation(active_sit_new, cell_coords, self.world_model, 'cell')
         self.additions[0][iteration] = deepcopy(self.additions[0][iteration-1])
@@ -733,17 +739,17 @@ class SpSearch(MapSearch):
         if self.clarification_lv == self.goal_cl_lv:
             logging.debug('Достигнут уровень уточнения, как в целевой ситуации: {0}'.format(self.clarification_lv))
         if self.clarification_lv > self.goal_cl_lv:
-            sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
+            sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
             goal_size = [goal['objects'][agent]['x'] - x_size, goal['objects'][agent]['y'] - y_size, goal['objects'][agent]['x'] + x_size, goal['objects'][agent]['y'] + y_size]
             region_location, region_map = locater('region-', rmap, goal['objects'], borders)
             cell_location, cell_map, near_loc, cell_coords, clar_lv = cell_creater(goal_size, goal['objects'], region_location, borders)
             events, direction, holding = pm_parser(check_pm.sign.images[1], agent, self.world_model, base='image')
             agent_state = state_prediction(self.world_model['I'], direction, self.world_model, holding)
             goal_sit_new = define_situation(sit_name + 'sp', cell_map, events, agent_state, self.world_model)
-            goal_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+            goal_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                     self.additions[1],
                                     self.world_model)
-            st.SIT_COUNTER += 1
+            self.SIT_COUNTER += 1
             state_fixation(goal_sit_new, cell_coords, self.world_model, 'cell')
         else:
             goal_sit_new = self.goal_pm
@@ -1145,8 +1151,8 @@ class SpSearch(MapSearch):
 
         agent_state = state_prediction(agent, history_benchmark[finish], self.world_model)
 
-        sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
-        st.SIT_COUNTER+=1
+        sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
+        self.SIT_COUNTER+=1
         estimation = define_situation(sit_name + 'sp', cell_map, events, agent_state, self.world_model)
         state_fixation(estimation, cell_coords, self.world_model, 'cell')
 
@@ -1271,13 +1277,13 @@ class SpSearch(MapSearch):
             new_x_y[self.I_obj.name]['holding'] = {'cause': [self.I_obj.name, block_name], 'effect': []}
 
         region_map, cell_map, cell_location, near_loc, cell_coords_new, _,_ = signs_markup(new_x_y, self.additions[3], self.I_obj.name, cell_coords)
-        sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
-        st.SIT_COUNTER+=1
+        sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
+        self.SIT_COUNTER+=1
 
         if script.sign.name == 'rotate' or  script.sign.name == 'move':
             conditions = new_x_y['conditions']
         else:
-            from src.planner.scripts.mapspatial.agent import get_conditions
+            from mapspatial.agent.planning_agent import get_conditions
             conditions = get_conditions(new_x_y, (0, script.sign.name), block_name, ground_block)
             new_x_y['conditions'] = conditions
 
@@ -1371,8 +1377,8 @@ class SpSearch(MapSearch):
                                                                                                 self.I_obj.name, fn_cell_4)
 
             agent_state = state_prediction(agent, direction, self.world_model, holding = holding)
-            sit_name = st.SIT_PREFIX + str(st.SIT_COUNTER)
-            st.SIT_COUNTER += 1
+            sit_name = self.SIT_PREFIX + str(self.SIT_COUNTER)
+            self.SIT_COUNTER += 1
             new_situation = define_situation(sit_name + 'sp', cell_map, events, agent_state, self.world_model)
 
             state_fixation(new_situation, cell_coords, self.world_model, 'cell')
@@ -1491,21 +1497,21 @@ class SpSearch(MapSearch):
         parsed_map['cl_lv'] = self.clarification_lv
         self.additions[0][iteration + 1] = parsed_map
         if self.change_map(active_map, cell_location):
-            active_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc, self.additions[1],
+            active_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc, self.additions[1],
                                  self.world_model)
             logging.info('Карта пересчитана!')
         elif iteration > 0:
             if list(self.additions[2]["I"][iteration].values()) != list(self.additions[2]["I"][iteration - 1].values()):
-                active_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+                active_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                      self.additions[1], self.world_model)
             elif self.clarification_lv > 0:
-                active_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+                active_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
                                         self.additions[1], self.world_model)
         # elif 'exp_*map*' in self.world_model:
         #     old_size = self.world_model['exp_*map*'].images[2].spread_down_activity_view(depth=1)
         #     new_size = self.world_model['*map*'].images[2].spread_down_activity_view(depth=1)
         #     if old_size != new_size:
-        #         active_map = define_map(st.MAP_PREFIX + str(st.SIT_COUNTER), region_map, cell_location, near_loc,
+        #         active_map = define_map(self.MAP_PREFIX + str(self.SIT_COUNTER), region_map, cell_location, near_loc,
         #                                 self.additions[1],
         #                                 self.world_model)
         #         logging.info('Карта пересчитана!')

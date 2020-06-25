@@ -6,9 +6,9 @@ from multiprocessing import Pipe, Process
 from multiprocessing import log_to_stderr
 import pickle
 
-from src.planner.scripts.mapcore.planning import PlanningAgent
-from src.planner.scripts.mapmulti.agent.messagen import reconstructor
-from src.planner.scripts.mapmulti.agent.messagen import Tmessage
+from mapcore.planning.agent.planning_agent import PlanningAgent
+from mapmulti.agent.messagen import reconstructor
+from mapmulti.agent.messagen import Tmessage
 
 class MAgent(PlanningAgent):
     def __init__(self):
@@ -40,10 +40,10 @@ class MAgent(PlanningAgent):
         logging.info('Grounding start: {0}'.format(self.problem.name))
         signs = self.load_swm(type = 'classic')
         if self.TaskType == 'mahddl':
-            from src.planner.scripts.mapmulti.grounding import hddl_grounding
+            from mapmulti.grounding import hddl_grounding
             self.task = hddl_grounding.ground(self.problem, self.name, signs)
         elif self.TaskType == 'mapddl':
-            from src.planner.scripts.mapmulti.grounding import pddl_grounding
+            from mapmulti.grounding import pddl_grounding
             self.task = pddl_grounding.ground(self.problem, self.name, signs)
         else:
             Exception('Wrong TaskType! (mahddl or mapddl)')
@@ -75,7 +75,7 @@ class MAgent(PlanningAgent):
         This function is needed to synthesize all plans, choose the best one and
         save the experience.
         """
-        from src.planner.scripts.mapmulti.search import MapSearch as Search
+        from mapmulti.search.mapsearch import MapSearch as Search
         logging.info('Search start: {0}, Start time: {1} by agent: {2}'.format(self.task.name, time.clock(), self.name))
         if len(self.others) > 1:
             method = 'Broadcast'

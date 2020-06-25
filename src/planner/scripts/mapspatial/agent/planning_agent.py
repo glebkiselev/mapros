@@ -554,7 +554,7 @@ class Manager:
             subtask = major[1].recv()
             if subtask != 'STOP':
                 for info, conn in others:
-                    if info[0] != subtask[0]:
+                    if info[0] != subtask[0]:# test [0] - ag name
                         continue
                     conn.send(subtask[1:])
                     solved = conn.recv()

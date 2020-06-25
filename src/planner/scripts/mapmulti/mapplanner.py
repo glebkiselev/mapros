@@ -1,8 +1,8 @@
 import logging
 import os
 
-from src.planner.scripts.mapcore.planning.mapplanner import MapPlanner as MPcore
-from src.planner.scripts.mapmulti.agent.planning_agent import Manager
+from mapcore.planning.mapplanner import MapPlanner as MPcore
+from mapmulti.agent.planning_agent import Manager
 SOLUTION_FILE_SUFFIX = '.soln'
 
 import platform

@@ -1,7 +1,7 @@
 import logging
 
-from src.planner.scripts.mapcore.planning import mix_pairs
-from src.planner.scripts.mapcore.planning import MapSearch as MScore
+from mapcore.planning.search.mapsearch import mix_pairs
+from mapcore.planning.search.mapsearch import MapSearch as MScore
 from copy import copy
 
 MAX_CL_LV = 1
