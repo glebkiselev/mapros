@@ -5,6 +5,7 @@ from __future__ import print_function
 import time
 
 from planner.srv import AddRobotMessage, AddRobotMessageResponse
+from std_msgs.msg import String
 import rospy
 import pickle
 import re
@@ -25,6 +26,7 @@ class Manager:
         self.solved = {}
         rospy.init_node('Manager')
         agent_choose = rospy.Service('manager_service', AddRobotMessage, self.plan_synthesis)
+        self.solution_publisher = rospy.Publisher('solution_pub', String, queue_size=10)
         print('Agents: {0}'.format(self.agents))
         print("Ready to handle robot request.")
         rospy.spin()
@@ -59,6 +61,7 @@ class Manager:
         elif 'requirements_solution:' in request:
             print('Request was requirements_solution')
             self.solution = re.split(': ', request)[1]
+            self.solution_publisher.publish(self.solution)
             return AddRobotMessageResponse('STOP')
         elif 'requirements_wait_sol:' in request:
             print('Request was ' + request)
@@ -66,15 +69,19 @@ class Manager:
             if self.solution:
                 print('sol len is {0} sending it to {1}'.format(len(self.solution), ag_name))
                 return AddRobotMessageResponse('STOP: %s' % self.solution)
-            while not ag_name in self.subtasks or self.solution:
+            while not ag_name in self.subtasks and not self.solution:
                 time.sleep(1)
+                if self.solution:
+                    break
             else:
                 if ag_name in self.subtasks:
                     subtask = self.subtasks[ag_name]
                     self.subtasks.pop(ag_name)
                     return AddRobotMessageResponse(subtask)
-                elif self.solution:
+                else:
+                    print('sending STOP and solution')
                     return AddRobotMessageResponse('STOP: %s' % self.solution)
+            return AddRobotMessageResponse('STOP: %s' % self.solution)
         elif 'requirements_sub:' in request:
             print('Request was requirements_sub')
             req = re.split(': ', request)[1]

@@ -10,6 +10,7 @@ from copy import deepcopy, copy
 
 import rospy
 from planner.srv import *
+from std_msgs.msg import String
 import pickle
 
 class RoboAgent:
@@ -26,7 +27,8 @@ class RoboAgent:
             self.agents = agent_info[3]
             self.backward = agent_info[4]
             self.subsearch=agent_info[5]
-            self.solution = self.search_solution()
+            self.solution = ''
+            self.search_solution()
         else:
             print('%s not in the Task requirements!' % self.name)
 
@@ -38,6 +40,12 @@ class RoboAgent:
             return resp1.response
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
+
+    def subscribe_solution(self, data):
+        self.solution = data.data
+        if self.solution:
+            print("Get solution!")
+
 
     def search_solution(self):
         # init agent
@@ -97,7 +105,7 @@ class RoboAgent:
                     solutions.append(solution)
                     map = ag_solution[1]
             # send final solutions
-            print('sending final solution by %s' % self.name)
+            print('sending final solution by major agent %s' % self.name)
             sol_to_send = pickle.dumps(solutions, 0).decode()
             server_answer = self.send_request("requirements_solution: {0}".format(sol_to_send))
 
@@ -105,7 +113,16 @@ class RoboAgent:
             major_agent = resp
             while flag:
                 req = self.send_request("requirements_wait_sol: %s" %self.name)
+                if self.solution:
+                    break
+                try:
+                    'STOP:' in req
+                except TypeError:
+                    print('still no req')
+                    rospy.Subscriber("solution_pub", String, self.subscribe_solution)
+                    req = 'STOP: ' + self.solution
                 if 'STOP:' in req:
+                    print('Agent %s get final solution' % self.name)
                     subtask = re.split(': ', req)[1]
                     major_solutions = pickle.loads(subtask.encode())
                     if major_solutions:
@@ -149,9 +166,6 @@ class RoboAgent:
                     else:
                         logging.info("Агент {0} не смог синтезировать план".format(self.name))
 
-
-
-        #
         # for ind, act1 in enumerate(copy(solutions)):
         #     for act1_name, act1_map in act1.items():
         #         for act2, self_act in self_solutions:

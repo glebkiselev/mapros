@@ -10,6 +10,7 @@ from copy import deepcopy, copy
 
 import rospy
 from planner.srv import *
+from std_msgs.msg import String
 import pickle
 
 class RoboAgent:
@@ -26,7 +27,8 @@ class RoboAgent:
             self.agents = agent_info[3]
             self.backward = agent_info[4]
             self.subsearch=agent_info[5]
-            self.solution = self.search_solution()
+            self.solution = ''
+            self.search_solution()
         else:
             print('%s not in the Task requirements!' % self.name)
 
@@ -38,6 +40,12 @@ class RoboAgent:
             return resp1.response
         except rospy.ServiceException as e:
             print("Service call failed: %s"%e)
+
+    def subscribe_solution(self, data):
+        self.solution = data.data
+        if self.solution:
+            print("Get solution!")
+
 
     def search_solution(self):
         # init agent
@@ -105,8 +113,17 @@ class RoboAgent:
             major_agent = resp
             while flag:
                 req = self.send_request("requirements_wait_sol: %s" %self.name)
+                if self.solution:
+                    break
+                try:
+                    'STOP:' in req
+                except TypeError:
+                    print('still no req')
+                    rospy.Subscriber("solution_pub", String, self.subscribe_solution)
+                    req = 'STOP: ' + self.solution
                 if 'STOP:' in req:
-                    subtask = re.split(': ', req)[2]
+                    print('Agent %s get final solution' % self.name)
+                    subtask = re.split(': ', req)[1]
                     major_solutions = pickle.loads(subtask.encode())
                     if major_solutions:
                         major_agent_sign = workman.task.signs[major_agent]
